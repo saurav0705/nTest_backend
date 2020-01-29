@@ -17,7 +17,7 @@ quesRouter.route('/')
 })
 .get((req,res,next)=>{
     Questions.find({})
-    .populate('answers author')
+    .deepPopulate('answers author answers.author')
     .then((questions)=>{
         res.json({'questionList': questions});
     },(err)=>(next(err)))
@@ -56,12 +56,6 @@ quesRouter.route('/:questionId/answer')
     Questions.findById(req.params.questionId)
     .deepPopulate('answers.author')
     .then((question)=>{
-        for(let i=0;i<question.answers.length;i++)
-        {   Users.findById(question.answers[i].author)
-            .then((user)=>{
-                question.answers[i].author=user;
-            });
-        }
         res.json({"answer":question.answers});
     },(err)=>next(err))
     .catch((err)=>next(err));
@@ -82,5 +76,20 @@ quesRouter.route('/:questionId/answer')
     .catch((err)=>next(err));
 });
 
+quesRouter.route('/search')
+.all((req,res,next)=>{
+    res.statusCode=200;
+    res.setHeader('Content-type','application/json');
+    next();
+})
+.post((req,res,next)=>{
+    Questions.find({$text: {$search: req.body.search}})
+    .limit(10)
+    .deepPopulate('answers author answers.author')
+    .then((questions)=>{
+        res.json({'questionList': questions});
+    },(err)=>(next(err)))
+    .catch((err)=>(next(err)));
+})
 
 module.exports = quesRouter;

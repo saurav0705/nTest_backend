@@ -24,5 +24,6 @@ const question = new Schema({
 });
 
 question.plugin(deepPopulate);
+question.index({name: 'text', 'question': 'text'});
 const Question = mongoose.model('Question',question);
 module.exports = Question;
