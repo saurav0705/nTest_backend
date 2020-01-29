@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-
+var deepPopulate = require('mongoose-deep-populate')(mongoose);
 
 
 const question = new Schema({
@@ -23,5 +23,6 @@ const question = new Schema({
     timestamps:true
 });
 
+question.plugin(deepPopulate);
 const Question = mongoose.model('Question',question);
 module.exports = Question;

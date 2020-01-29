@@ -17,6 +17,7 @@ quesRouter.route('/')
 })
 .get((req,res,next)=>{
     Questions.find({})
+    .populate('answers author')
     .then((questions)=>{
         res.json({'questionList': questions});
     },(err)=>(next(err)))
@@ -53,8 +54,14 @@ quesRouter.route('/:questionId/answer')
 })
 .get((req,res,next)=>{
     Questions.findById(req.params.questionId)
-    .populate('answers')
+    .deepPopulate('answers.author')
     .then((question)=>{
+        for(let i=0;i<question.answers.length;i++)
+        {   Users.findById(question.answers[i].author)
+            .then((user)=>{
+                question.answers[i].author=user;
+            });
+        }
         res.json({"answer":question.answers});
     },(err)=>next(err))
     .catch((err)=>next(err));
