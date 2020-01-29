@@ -3,11 +3,13 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
-
+var mongoose = require('mongoose');
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
-
+var config = require('./config');
 var app = express();
+var passport = require('passport');
+var authenticate = require('./authenticate');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -18,6 +20,15 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+const url = config.mongoURL;
+const connect = mongoose.connect(url);
+
+connect.then((db) => {
+  console.log("connected to the server........................................");  
+},(err) => { console.log("error while connecting to server :: ",err); });
+
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
