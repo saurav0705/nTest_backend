@@ -12,7 +12,7 @@ var config = require('./config');
 var app = express();
 var passport = require('passport');
 var authenticate = require('./authenticate');
-
+var cors = require('./routes/cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -31,7 +31,7 @@ connect.then((db) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(cors.cors);
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions',quesRouter);
