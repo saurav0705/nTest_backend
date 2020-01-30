@@ -26,7 +26,15 @@ quesRouter.route('/')
 .post(authenticate.verifyUser,(req,res,next)=>{
     Questions.create({'author': req.user._id,'question': req.body.question})
     .then((question)=>{
-        res.json({"status":"ok","question":question});
+        Users.findById(req.user._id)
+        .then((user)=>{
+            user.questions.push(question);
+            user.save()
+            .then((user)=>{
+                res.json({"status":"ok","question":question});
+            })
+        })
+        
     },(err)=> next(err))
     .catch((err)=>next(err))
 });
@@ -65,11 +73,20 @@ quesRouter.route('/:questionId/answer')
     .then((question)=>{
         Answers.create({"answer":req.body.answer,"author":req.user._id,"question":req.params.questionId})
         .then((answer)=>{
-            question.answers.push(answer);
-            question.save()
-            .then((question)=>{
-                res.json({"status":"ok","question":question});
+            Users.findById(req.user._id)
+            .then((user)=>{
+                user.answers.push(answer)
+                user.save()
+                .then((user)=>{
+                    question.answers.push(answer);
+                    question.save()
+                    .then((question)=>{
+                    res.json({"status":"ok","question":question});
+                })
+                })
+               
             })
+            
             
         })
     },(err)=>next(err))
