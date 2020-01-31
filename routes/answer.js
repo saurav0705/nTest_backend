@@ -28,7 +28,7 @@ ansRouter.route('/:ansId/upvote')
     res.setHeader('Content-type','application/json');
     next();
 })
-.post((req,res,next)=>{
+.get((req,res,next)=>{
     Answers.findById(req.params.ansId)
     .then((answer)=>{
         if(find(answer.downvote,req.user._id))
@@ -67,7 +67,7 @@ ansRouter.route('/:ansId/downvote')
     res.setHeader('Content-type','application/json');
     next();
 })
-.post((req,res,next)=>{
+.get((req,res,next)=>{
     Answers.findById(req.params.ansId)
     .then((answer)=>{
         if(find(answer.upvote,req.user._id))

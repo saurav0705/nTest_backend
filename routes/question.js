@@ -47,6 +47,7 @@ quesRouter.route('/:questionId')
 })
 .get((req,res,next)=>{
     Questions.findById(req.params.questionId)
+    .deepPopulate('answers answers.author')
     .then((question)=>
     {
         res.json({"question":question})
@@ -93,14 +94,14 @@ quesRouter.route('/:questionId/answer')
     .catch((err)=>next(err));
 });
 
-quesRouter.route('/search')
+quesRouter.route('/search/:search')
 .all((req,res,next)=>{
     res.statusCode=200;
     res.setHeader('Content-type','application/json');
     next();
 })
-.post((req,res,next)=>{
-    Questions.find({$text: {$search: req.body.search}})
+.get((req,res,next)=>{
+    Questions.find({$text: {$search: req.params.search}})
     .limit(10)
     .deepPopulate('answers author answers.author')
     .then((questions)=>{

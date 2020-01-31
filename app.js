@@ -12,7 +12,7 @@ var config = require('./config');
 var app = express();
 var passport = require('passport');
 var authenticate = require('./authenticate');
-var cors = require('./routes/cors');
+var cors = require('cors');
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'jade');
@@ -31,7 +31,17 @@ connect.then((db) => {
 
 app.use(passport.initialize());
 app.use(passport.session());
-app.use(cors.cors);
+app.use(cors());
+// app.use((req,res,next)=>{
+//   res.header("Access-Control-Allow-Origin","*");
+//   res.header("Access-Control-Allow-Headers","*");
+//   if(req.method === 'OPTIONS')
+//   {
+//     res.header("Access-Control-Allow-Methods","*");
+//     return req.status(200).json({});
+//   }
+//   next();
+// })
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/questions',quesRouter);

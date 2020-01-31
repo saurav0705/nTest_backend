@@ -10,11 +10,11 @@ const user = new Schema({
     },
     answers : [ {
         type : mongoose.Schema.Types.ObjectId,
-       ref :''
+       ref :'Answer'
     } ],
     questions : [ {
         type : mongoose.Schema.Types.ObjectId,
-       ref :''
+       ref :'Question'
     } ],
 
 },{

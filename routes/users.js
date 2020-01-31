@@ -55,4 +55,15 @@ userRouter.post('/login',passport.authenticate('local'),(req,res)=>{
   res.json({status:"You are succesfully logged In",success:true,token:token});
 });
 
+
+userRouter.get('/info',authenticate.verifyUser,(req,res)=>{
+  res.statusCode=200;
+  res.setHeader('Content-type','applicatio/json');
+  Users.findById(req.user._id)
+  .populate('answers questions')
+  .then((user)=>{
+    res.json({user:user});
+  },(err)=>next(err))
+  .catch((err)=>next(err));
+});
 module.exports = userRouter;
